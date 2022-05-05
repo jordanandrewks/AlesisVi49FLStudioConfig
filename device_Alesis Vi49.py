@@ -1,7 +1,5 @@
 # name=Alesis Vi49
 
-import ui
-import midi
 import transport
 import channels
 
@@ -57,6 +55,16 @@ rotary_table = {
     14: 0
 }
 
+#   CC: Function
+functionalButtons = {
+    "RECORD": 3,
+    "LOOP": 9,
+    "PLAY": 22,
+    "STOP": 23,
+    "FAST_FORWARD": 24,
+    "REWIND": 25
+}
+
 def rotaryDialConversion(eventVelocity):
     panAmount = 0
 
@@ -75,28 +83,47 @@ def OnMidiMsg(event):
     global CHANNEL_SELECT
 
     event.handled = False
+    # Enable Tp debug
     # print(event.midiId, event.data1, event.data2, event.velocity, "Button Pressed")
     # print("CC=",event.data1)
 
-    if (event.data1 == 114):
-        print("RECORD")
-        transport.record()
+    # Handle Functional Buttons
+    if (event.data1 in functionalButtons.values()):
+        # print(transport.isPlaying())
+        # print(event.data1)
+        if functionalButtons["RECORD"] == event.data1:
+            transport.record()
+        if functionalButtons["LOOP"] == event.data1:
+            transport.setLoopMode()
+        if functionalButtons["PLAY"] == event.data1:
+            transport.start()
+        if functionalButtons["STOP"] == event.data1:
+            transport.stop()
+        if functionalButtons["FAST_FORWARD"] == event.data1:
+            if event.velocity == 127:
+                transport.fastForward(2)
+            elif event.velocity == 0:
+                transport.fastForward(0)
+        if functionalButtons["REWIND"] == event.data1:
+            if event.velocity == 127:
+                transport.rewind(2)
+            elif event.velocity == 0:
+                transport.rewind(0)
+               
 
     padOffset = 102                             # Where CC starts for the drum pads
     numberOfPads = 16
     padToChannel = event.data1 - padOffset
 
-
-
     if (event.midiId == 176 and event.velocity == 127 and event.data1 in altLut):
         channelSelectBySwitch = altLut[event.data1]
         CHANNEL_SELECT = channelSelectBySwitch
-        print(f"Channel SELECTED: {channelSelectBySwitch} ----------- CC: {event.data1}, Switch Toggeled: {channelSelectBySwitch+1}")
+        # print(f"Channel SELECTED: {channelSelectBySwitch} ----------- CC: {event.data1}, Switch Toggeled: {channelSelectBySwitch+1}")
 
     if (event.midiId == 176 and event.velocity == 0 and event.data1 in altLut):
         channelSelectBySwitch = altLut[event.data1]
         CHANNEL_SELECT = 0  # RESET - See if it can deselect
-        print(f"Channel DE-SELECTED: {channelSelectBySwitch} ----------- CC: {event.data1}, Switch Toggeled: {channelSelectBySwitch+1}")
+        # print(f"Channel DE-SELECTED: {channelSelectBySwitch} ----------- CC: {event.data1}, Switch Toggeled: {channelSelectBySwitch+1}")
         # Remove channel when finished
 
     # Control Volume 
@@ -129,12 +156,6 @@ def OnMidiMsg(event):
             channels.midiNoteOn(padToChannel, 60, 0)
             print(f"PAD{padToChannel + 1}")
         except (TypeError):
-            print(f"Here INVALID CHANNEL: {padToChannel + 1}")
+            print(f"Here INVALID CHANNEL: {padToChannel + 1}" )
 
-
-# Todo:
-# Add Pickup off/on - Just just the 2 buttons pressed at the same time to enable/disable
-# Add Play function
-# Add Stop function
-# Add Loop function
-
+# Todo map some more rotarys
