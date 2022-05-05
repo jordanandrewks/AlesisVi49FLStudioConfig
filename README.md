@@ -27,3 +27,8 @@ At this stage you can close the editor as the Alesis is ready.
 6 - Head back over to files downloaded to is repo and move the folder Alesis into ... (Add folder path here) ...
 
 ... Will add more later...........
+
+References:
+
+[FL Midi Scripting] https://www.image-line.com/fl-studio-learning/fl-studio-online-manual/html/midi_scripting.htm#startStopConst
+[Generic CC list] https://professionalcomposers.com/midi-cc-list/
