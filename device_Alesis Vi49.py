@@ -52,8 +52,8 @@ altLut = {
 
 #   CC: Rotary No. (start from 0)
 rotary_table = {
-    14: 0,
-    76: 1
+    14: 0,      # ROTARY 1
+    76: 1       # ROTARY 2
 }
 
 #   CC: Function
@@ -127,7 +127,8 @@ def OnMidiMsg(event):
         # print(f"Channel DE-SELECTED: {channelSelectBySwitch} ----------- CC: {event.data1}, Switch Toggeled: {channelSelectBySwitch+1}")
         # Remove channel when finished
 
-    # Control Volume - CC 14
+    # Control Volume - CC 14 in the rotary table - It might be better to change them to use the switch/rotor number as a key instead.
+    # Todo change this to look 
     if event.midiId == 176 and event.data1 == 14:
         currentChannelVelocity = channels.getChannelVolume(CHANNEL_SELECT)
         rotaryVelocity = event.velocity * BIT_SCALER_127_TO_1
