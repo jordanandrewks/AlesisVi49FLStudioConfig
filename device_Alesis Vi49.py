@@ -52,7 +52,8 @@ altLut = {
 
 #   CC: Rotary No. (start from 0)
 rotary_table = {
-    14: 0
+    14: 0,
+    76: 1
 }
 
 #   CC: Function
@@ -126,7 +127,7 @@ def OnMidiMsg(event):
         # print(f"Channel DE-SELECTED: {channelSelectBySwitch} ----------- CC: {event.data1}, Switch Toggeled: {channelSelectBySwitch+1}")
         # Remove channel when finished
 
-    # Control Volume 
+    # Control Volume - CC 14
     if event.midiId == 176 and event.data1 == 14:
         currentChannelVelocity = channels.getChannelVolume(CHANNEL_SELECT)
         rotaryVelocity = event.velocity * BIT_SCALER_127_TO_1
@@ -134,7 +135,7 @@ def OnMidiMsg(event):
         if rotaryVelocity < currentChannelVelocity + PICKUP_THRESH and rotaryVelocity > currentChannelVelocity - PICKUP_THRESH :
             channels.setChannelVolume(CHANNEL_SELECT, rotaryVelocity, 1)
 
-    # Control Pan
+    # Control Pan - CC 76
     if event.midiId == 176 and event.data1 == 76:
         currentChannelPan = channels.getChannelPan(CHANNEL_SELECT)
         rotaryPan = rotaryDialConversion(event.velocity)
@@ -158,4 +159,4 @@ def OnMidiMsg(event):
         except (TypeError):
             print(f"Here INVALID CHANNEL: {padToChannel + 1}" )
 
-# Todo map some more rotarys
+# Todo map some more rotaries
